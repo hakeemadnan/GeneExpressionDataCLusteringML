@@ -2,13 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.cluster.hierarchy import linkage, fcluster, dendrogram
-from scipy.spatial.distance import pdist
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import anthropic
-import io
+import google.generativeai as genai
 
 st.set_page_config(
     page_title="Gene Expression Clustering",
@@ -84,10 +81,8 @@ def run_clustering(df, linkage_method, n_clusters):
     return df_scaled, pca_df, linked, clusters
 
 def estimate_optimal_k(linked, max_k=10):
-    """Estimate optimal clusters via max gap in merge distances."""
-    n = len(linked)
     distances = linked[:, 2]
-    last_k = min(max_k, n)
+    last_k = min(max_k, len(linked))
     diffs = np.diff(distances[-(last_k):])
     optimal = len(diffs) - np.argmax(diffs[::-1])
     return max(2, min(optimal + 1, max_k))
@@ -166,14 +161,10 @@ Please provide a clear, scientifically grounded analysis:
 
 Be concise, insightful, and actionable. Use markdown formatting."""
 
-    client = anthropic.Anthropic()
-    with client.messages.stream(
-        model="claude-opus-4-5",
-        max_tokens=1200,
-        messages=[{"role": "user", "content": prompt}]
-    ) as stream:
-        for text in stream.text_stream:
-            yield text
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
+    yield response.text
 
 
 # ── UI ──────────────────────────────────────────────────────────────────────
@@ -195,7 +186,7 @@ with st.sidebar:
 4. AI generates cluster insights
 """)
     st.markdown("---")
-    st.caption("Built with Streamlit · Powered by Claude")
+    st.caption("Built with Streamlit · Powered by Gemini")
 
 uploaded_file = st.file_uploader("Upload gene expression CSV", type=["csv"],
                                   help="First column = gene names, remaining columns = samples")
@@ -218,7 +209,6 @@ if uploaded_file:
 
     st.divider()
 
-    # Run clustering
     with st.spinner("Running hierarchical clustering…"):
         df_scaled, pca_df, linked, raw_clusters = run_clustering(df, linkage_method, n_clusters=10)
         optimal_k = estimate_optimal_k(linked)
@@ -228,7 +218,6 @@ if uploaded_file:
 
     cluster_counts = pd.Series(clusters).value_counts().sort_index()
 
-    # Metric cards
     cols = st.columns(min(optimal_k, 6))
     for i, (c, n) in enumerate(cluster_counts.items()):
         with cols[i % len(cols)]:
@@ -253,7 +242,7 @@ if uploaded_file:
     with tab2:
         fig_dend = plot_dendrogram(linked2)
         st.pyplot(fig_dend, use_container_width=True)
-        st.caption(f"Horizontal dashed line indicates cut for **{optimal_k} clusters**")
+        st.caption(f"Cut point for **{optimal_k} clusters**")
 
     with tab3:
         fig_bar = plot_cluster_bar(cluster_counts)
@@ -262,17 +251,15 @@ if uploaded_file:
     st.divider()
 
     st.markdown("### 🤖 AI Cluster Analysis")
-    st.markdown("Claude interprets the biological meaning of your clusters.")
+    st.markdown("Gemini interprets the biological meaning of your clusters.")
 
     if st.button("✨ Generate AI Analysis"):
-        st.markdown('<div class="ai-box">', unsafe_allow_html=True)
-        placeholder = st.empty()
-        full_text = ""
-        with st.spinner(""):
+        with st.spinner("Generating insights…"):
+            full_text = ""
+            placeholder = st.empty()
             for chunk in get_ai_analysis(cluster_counts.to_dict(), n_samples, n_genes, optimal_k, linkage_method):
                 full_text += chunk
-                placeholder.markdown(full_text)
-        st.markdown("</div>", unsafe_allow_html=True)
+                placeholder.markdown(f'<div class="ai-box">{full_text}</div>', unsafe_allow_html=True)
 
     st.divider()
     st.markdown("### 💾 Download Results")
@@ -287,8 +274,8 @@ else:
     st.markdown("""
 **Expected format:**
 ```
-attrib_name, sample_1, sample_2, sample_3, ...
-GENE_A,      1.23,     0.45,     2.10,     ...
-GENE_B,      0.89,     1.67,     0.33,     ...
+gene_name, sample_1, sample_2, sample_3, ...
+GENE_A,    1.23,     0.45,     2.10,     ...
+GENE_B,    0.89,     1.67,     0.33,     ...
 ```
 """)
