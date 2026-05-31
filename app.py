@@ -70,7 +70,8 @@ def run_clustering(df, linkage_method, n_clusters):
     df_scaled = pd.DataFrame(scaled, index=df_T.index, columns=df_T.columns)
 
     linked = linkage(scaled, method=linkage_method)
-    clusters = fcluster(linked, t=n_clusters, criterion="maxclust")
+    cut_distance = (linked[:, 2][-2] + linked[:, 2][-1]) / 2
+    clusters = fcluster(linked, t=cut_distance, criterion="distance")
     df_scaled["Cluster"] = clusters
 
     pca = PCA(n_components=2)
@@ -83,9 +84,12 @@ def run_clustering(df, linkage_method, n_clusters):
 
 def estimate_optimal_k(linked):
     distances = linked[:, 2]
-    accelerations = np.diff(distances, 2)
-    k = accelerations[-max_k:].argmax() + 2
-    return max(2, min(k, max_k))
+    gaps = np.diff(distances)
+    biggest_gap_idx = np.argmax(gaps)
+    cut_distance = (distances[biggest_gap_idx] + distances[biggest_gap_idx + 1]) / 2
+    clusters = fcluster(linked, t=cut_distance, criterion="distance")
+    return len(np.unique(clusters))
+    
 def plot_dendrogram(linked):
     fig, ax = plt.subplots(figsize=(10, 4))
     fig.patch.set_facecolor("white")
