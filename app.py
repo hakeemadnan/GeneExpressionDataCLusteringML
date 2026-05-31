@@ -65,21 +65,19 @@ def load_and_preprocess(file):
 
 def run_clustering(df, linkage_method, n_clusters):
     scaler = StandardScaler()
-    df_T = df.T
-    scaled = scaler.fit_transform(df_T)
-    df_scaled = pd.DataFrame(scaled, index=df_T.index, columns=df_T.columns)
+    df_input = df if cluster_by == "Genes" else df.T
+    scaled = scaler.fit_transform(df_input)
 
     linked = linkage(scaled, method=linkage_method)
-    clusters = fcluster(linked, t=n_clusters, criterion="maxclust")
-    df_scaled["Cluster"] = clusters
+    optimal_k = estimate_optimal_k(linked)
+    clusters = fcluster(linked, t=optimal_k, criterion="maxclust")
 
     pca = PCA(n_components=2)
-    X = df_scaled.drop("Cluster", axis=1)
-    X_pca = pca.fit_transform(X)
-    pca_df = pd.DataFrame(X_pca, columns=["PC1", "PC2"], index=df_T.index)
+    X_pca = pca.fit_transform(scaled)
+    pca_df = pd.DataFrame(X_pca, columns=["PC1", "PC2"], index=df_input.index)
     pca_df["Cluster"] = clusters
 
-    return df_scaled, pca_df, linked, clusters
+    return pca_df, linked, clusters
 
 def estimate_optimal_k(linked):
     distances = linked[:, 2]
@@ -149,6 +147,7 @@ def get_ai_analysis(cluster_counts, n_samples, n_genes, n_clusters, linkage_meth
 Dataset overview:
 - Total samples: {n_samples}
 - Total genes: {n_genes}
+- Clustering perspective: {"genes grouped by expression patterns across patients" if cluster_by == "Genes" else "patients grouped by their gene expression profiles"}
 - Clustering method: Hierarchical clustering, {linkage_method} linkage
 - Number of clusters identified: {n_clusters}
 
@@ -189,6 +188,7 @@ st.divider()
 with st.sidebar:
     st.markdown("### ⚙️ Settings")
     linkage_method = st.selectbox("Linkage method", ["ward", "complete", "average", "single"], index=0)
+    cluster_by = st.radio("Cluster by", ["Samples (Patients)", "Genes"])
     st.markdown("---")
     st.markdown("**How it works**")
     st.markdown("""
@@ -222,13 +222,14 @@ if uploaded_file:
     st.divider()
 
     with st.spinner("Running hierarchical clustering…"):
-        df_scaled, pca_df, linked, raw_clusters = run_clustering(df, linkage_method, n_clusters=10)
-        optimal_k = estimate_optimal_k(linked)
-        df_scaled2, pca_df2, linked2, clusters = run_clustering(df, linkage_method, n_clusters=optimal_k)
+        pca_df2, linked2, clusters = run_clustering(df, linkage_method, cluster_by)
+        optimal_k = len(np.unique(clusters))
+   
+   
+   label = "gene" if cluster_by == "Genes" else "patient"
+   st.markdown(f"### 📊 Results — **{optimal_k} {label} clusters** detected (auto)")
 
-    st.markdown(f"### 📊 Results — **{optimal_k} clusters** detected (auto)")
-
-    cluster_counts = pd.Series(clusters).value_counts().sort_index()
+   cluster_counts = pd.Series(clusters).value_counts().sort_index()
 
     cols = st.columns(min(optimal_k, 6))
     for i, (c, n) in enumerate(cluster_counts.items()):
