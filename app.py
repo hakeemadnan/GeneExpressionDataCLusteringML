@@ -5,6 +5,7 @@ from scipy.cluster.hierarchy import linkage, fcluster, dendrogram
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+from sklearn.metrics import silhouette_score
 from google import genai
 
 st.set_page_config(
@@ -69,7 +70,9 @@ def run_clustering(df, linkage_method, n_clusters):
     scaled = scaler.fit_transform(df_input)
 
     linked = linkage(scaled, method=linkage_method)
-    optimal_k = estimate_optimal_k(linked)
+
+    optimal_k = estimate_optimal_k(linked, scaled)
+
     clusters = fcluster(linked, t=optimal_k, criterion="maxclust")
 
     pca = PCA(n_components=2)
