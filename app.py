@@ -249,16 +249,16 @@ if uploaded_file:
 
     with tab1:
         fig_pca = plot_pca(pca_df2)
-        st.pyplot(fig_pca, use_container_width=True)
+        st.pyplot(fig_pca, width='stretch')
 
     with tab2:
         fig_dend = plot_dendrogram(linked2)
-        st.pyplot(fig_dend, use_container_width=True)
+        st.pyplot(fig_dend, width='stretch')
         st.caption(f"Cut point for **{optimal_k} clusters**")
 
     with tab3:
         fig_bar = plot_cluster_bar(cluster_counts)
-        st.pyplot(fig_bar, use_container_width=True)
+        st.pyplot(fig_bar,width='stretch')
 
     st.divider()
 
