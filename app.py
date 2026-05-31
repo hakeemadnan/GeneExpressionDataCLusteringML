@@ -82,13 +82,25 @@ def run_clustering(df, linkage_method, n_clusters):
 
     return pca_df, linked, clusters
 
-def estimate_optimal_k(linked):
-    distances = linked[:, 2]
-    gaps = np.diff(distances)
-    biggest_gap_idx = np.argmax(gaps)
-    cut_distance = (distances[biggest_gap_idx] + distances[biggest_gap_idx + 1]) / 2
-    clusters = fcluster(linked, t=cut_distance, criterion="distance")
-    return len(np.unique(clusters))
+def estimate_optimal_k(linked, scaled):
+    best_k = 2
+    best_score = -1
+
+    max_k = min(15, len(scaled) - 1)
+
+    for k in range(2, max_k + 1):
+        labels = fcluster(linked, t=k, criterion="maxclust")
+
+        if len(np.unique(labels)) < 2:
+            continue
+
+        score = silhouette_score(scaled, labels)
+
+        if score > best_score:
+            best_score = score
+            best_k = k
+
+    return best_k
     
 def plot_dendrogram(linked):
     fig, ax = plt.subplots(figsize=(10, 4))
