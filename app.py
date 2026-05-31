@@ -162,7 +162,7 @@ Please provide a clear, scientifically grounded analysis:
 Be concise, insightful, and actionable. Use markdown formatting."""
 
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash")
     response = model.generate_content(prompt)
     yield response.text
 
