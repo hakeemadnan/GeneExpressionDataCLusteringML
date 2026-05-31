@@ -160,13 +160,13 @@ Please provide a clear, scientifically grounded analysis:
 4. **Recommended next steps** — specific downstream analyses (differential expression, pathway enrichment, survival analysis, biomarker discovery, etc.)
 
 Be concise, insightful, and actionable. Use markdown formatting."""
-
-client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
-response = client.models.generate_content(
-model="gemini-2.5-flash",
-contents=prompt,
-)
-yield response.text
+    
+    client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+    response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=prompt,
+    )
+    yield response.text
 
 
 # ── UI ──────────────────────────────────────────────────────────────────────
