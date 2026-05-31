@@ -81,13 +81,11 @@ def run_clustering(df, linkage_method, n_clusters):
 
     return df_scaled, pca_df, linked, clusters
 
-def estimate_optimal_k(linked, max_k=10):
+def estimate_optimal_k(linked):
     distances = linked[:, 2]
-    last_k = min(max_k, len(linked))
-    diffs = np.diff(distances[-(last_k):])
-    optimal = len(diffs) - np.argmax(diffs[::-1])
-    return max(2, min(optimal + 1, max_k))
-
+    gaps = np.diff(distances)
+    k = len(gaps) - np.argmax(gaps[::-1])
+    return max(2, min(k, 8))
 def plot_dendrogram(linked):
     fig, ax = plt.subplots(figsize=(10, 4))
     fig.patch.set_facecolor("white")
