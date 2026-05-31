@@ -144,7 +144,7 @@ def get_ai_analysis(cluster_counts, n_samples, n_genes, n_clusters, linkage_meth
         f"  Cluster {c}: {n} samples ({round(n/n_samples*100)}%)"
         for c, n in cluster_counts.items()
     )
-    prompt = f"""You are a senior bioinformatics scientist analyzing RNA-seq gene expression data.
+    prompt = f"""You are explaining gene expression clustering results to a non-scientist — someone with no biology or data science background.
 
 Dataset overview:
 - Total samples: {n_samples}
@@ -155,13 +155,21 @@ Dataset overview:
 Cluster distribution:
 {summary}
 
-Please provide a clear, scientifically grounded analysis:
-1. **Cluster-by-cluster interpretation** — what each cluster likely represents (e.g., cell subtypes, disease states, expression profiles). Use the size and relative proportions as clues.
-2. **Overall biological significance** — what does finding {n_clusters} distinct groups suggest about the underlying biology?
-3. **Clinical relevance** — potential implications for diagnosis, prognosis, or treatment stratification.
-4. **Recommended next steps** — specific downstream analyses (differential expression, pathway enrichment, survival analysis, biomarker discovery, etc.)
+First figure out what type of gene expression data this likely is based on the dataset size and cluster distribution, then write your analysis so that anyone can understand it. Follow these rules:
+- Use simple everyday language
+- If you must use a technical word, immediately explain it in brackets like this: **gene expression** (how active a gene is — like a volume knob for each gene)
+- Use analogies and comparisons to everyday things
+- Avoid jargon wherever possible
+- Keep sentences short and clear
 
-Be concise, insightful, and actionable. Use markdown formatting."""
+Cover these points:
+1. **What type of data is this?** — based on the number of genes and samples, describe what kind of experiment this likely comes from
+2. **What are these clusters?** — explain in simple terms what it means that samples grouped together
+3. **What does each cluster likely represent?** — describe each group in plain English using the size and proportions as clues
+4. **Why does this matter?** — explain the real world significance
+5. **What should be done next?** — suggest next steps in plain English, explaining what each step involves
+
+End with a simple 2-3 line summary a non-scientist could read and immediately understand."""
     
     client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
     response = client.models.generate_content(
