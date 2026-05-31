@@ -215,8 +215,8 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Built with Streamlit · Powered by Gemini")
 
-uploaded_file = st.file_uploader("Upload gene expression CSV", type=["csv"],
-                                  help="First column = gene names, remaining columns = samples")
+uploaded_file = st.file_uploader("Upload gene expression CSV (max 50MB)", type=["csv"],
+                                  help="First column = gene names, remaining columns = samples. Max file size: 50MB")
 
 if uploaded_file:
     with st.spinner("Loading and preprocessing data…"):
