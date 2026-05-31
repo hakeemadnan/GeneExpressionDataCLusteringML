@@ -249,7 +249,8 @@ if uploaded_file:
     cols = st.columns(min(optimal_k, 6))
     for i, (c, n) in enumerate(cluster_counts.items()):
         with cols[i % len(cols)]:
-            pct = round(n / n_samples * 100)
+            total = sum(cluster_counts.values)
+            pct = round(n / total * 100)
             color = CLUSTER_COLORS[i % len(CLUSTER_COLORS)]
             border = BORDER_COLORS[i % len(BORDER_COLORS)]
             st.markdown(f"""
