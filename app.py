@@ -250,14 +250,14 @@ if uploaded_file:
     for i, (c, n) in enumerate(cluster_counts.items()):
         with cols[i % len(cols)]:
             total = sum(cluster_counts.values)
-            pct = round(n / total * 100)
+            pct = round(n / total * 100, 2)
             color = CLUSTER_COLORS[i % len(CLUSTER_COLORS)]
             border = BORDER_COLORS[i % len(BORDER_COLORS)]
             st.markdown(f"""
 <div class="metric-card" style="border-left-color:{border};">
   <div style="font-size:0.8rem;color:#888;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;">Cluster {c}</div>
   <div style="font-size:2rem;font-weight:700;color:{color};">{n}</div>
-  <div style="font-size:0.85rem;color:#666;">{pct}% of samples</div>
+  <div style="font-size:0.85rem;color:#666;">{pct}% of {"genes" if cluster_by == "Genes" else "samples"}</div>
 </div>""", unsafe_allow_html=True)
 
     st.markdown("---")
