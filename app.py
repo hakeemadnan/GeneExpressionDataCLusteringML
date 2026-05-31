@@ -70,8 +70,7 @@ def run_clustering(df, linkage_method, n_clusters):
     df_scaled = pd.DataFrame(scaled, index=df_T.index, columns=df_T.columns)
 
     linked = linkage(scaled, method=linkage_method)
-    cut_distance = (linked[:, 2][-2] + linked[:, 2][-1]) / 2
-    clusters = fcluster(linked, t=cut_distance, criterion="distance")
+    clusters = fcluster(linked, t=n_clusters, criterion="maxclust")
     df_scaled["Cluster"] = clusters
 
     pca = PCA(n_components=2)
