@@ -5,7 +5,7 @@ from scipy.cluster.hierarchy import linkage, fcluster, dendrogram
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-import google.generativeai as genai
+from google import genai
 
 st.set_page_config(
     page_title="Gene Expression Clustering",
