@@ -216,7 +216,7 @@ with st.sidebar:
     st.caption("Built with Streamlit · Powered by Gemini")
 
 uploaded_file = st.file_uploader("Upload gene expression CSV", type=["csv"],
-                                  help="First column = gene names, remaining columns = samples.)
+                                  help="First column = gene names, remaining columns = samples")
 
 if uploaded_file:
     with st.spinner("Loading and preprocessing data…"):
