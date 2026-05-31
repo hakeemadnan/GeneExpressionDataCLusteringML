@@ -81,7 +81,7 @@ def run_clustering(df, linkage_method, n_clusters):
 
     return df_scaled, pca_df, linked, clusters
 
-def estimate_optimal_k(linked, max_k=6):
+def estimate_optimal_k(linked):
     distances = linked[:, 2]
     accelerations = np.diff(distances, 2)
     k = accelerations[-max_k:].argmax() + 2
