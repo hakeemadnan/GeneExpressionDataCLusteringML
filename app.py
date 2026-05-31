@@ -161,10 +161,12 @@ Please provide a clear, scientifically grounded analysis:
 
 Be concise, insightful, and actionable. Use markdown formatting."""
 
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
-    yield response.text
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+response = client.models.generate_content(
+model="gemini-2.5-flash",
+contents=prompt,
+)
+yield response.text
 
 
 # ── UI ──────────────────────────────────────────────────────────────────────
