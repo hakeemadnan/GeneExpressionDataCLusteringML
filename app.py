@@ -41,12 +41,13 @@ st.markdown("""
     }
     .stButton>button:hover { opacity: 0.88; transform: translateY(-1px); }
     .ai-box {
-        background: white;
+        background: #1e1e2e;
         border-radius: 14px;
         padding: 1.5rem 2rem;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         border-top: 3px solid #4f8ef7;
         line-height: 1.75;
+        color: #e0e0e0;
     }
 </style>
 """, unsafe_allow_html=True)
