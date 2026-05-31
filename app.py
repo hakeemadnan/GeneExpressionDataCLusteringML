@@ -226,10 +226,10 @@ if uploaded_file:
         optimal_k = len(np.unique(clusters))
    
    
-   label = "gene" if cluster_by == "Genes" else "patient"
-   st.markdown(f"### 📊 Results — **{optimal_k} {label} clusters** detected (auto)")
+        label = "gene" if cluster_by == "Genes" else "patient"
+        st.markdown(f"### 📊 Results — **{optimal_k} {label} clusters** detected (auto)")
 
-   cluster_counts = pd.Series(clusters).value_counts().sort_index()
+        cluster_counts = pd.Series(clusters).value_counts().sort_index()
 
     cols = st.columns(min(optimal_k, 6))
     for i, (c, n) in enumerate(cluster_counts.items()):
