@@ -1,4 +1,8 @@
+
+
 # Gene Expression Analysis using Hierarchical Clustering
+
+[Live Demo](https://geneclustering.streamlit.app/)
 
 An AI-powered gene expression analysis system that uses hierarchical clustering and dimensionality reduction to identify patterns in high-dimensional RNA-seq data, with Generative AI assistance for interpreting clustering results.
 
@@ -87,4 +91,113 @@ Cluster Visualization
 Gemini 2.5 Flash
           ↓
 AI-Assisted Analytical Insights
+```
+## Model Evaluation
 
+The clustering quality is evaluated using the **Silhouette Score**, which measures how well each data point fits within its assigned cluster compared with other clusters.
+
+The application evaluates different cluster counts and selects the number of clusters with the best silhouette score.
+
+## Generative AI Integration
+
+The project integrates **Google Gemini 2.5 Flash** to interpret the clustering results and generate human-readable analytical insights.
+
+The AI component provides:
+- Explanation of identified gene expression clusters
+- Interpretation of observed patterns
+- Possible biological significance
+- Suggested next steps for analysis
+- Concise summaries of complex clustering results
+
+## Project Structure
+
+GeneExpressionDataCLusteringML/
+├── app.py
+├── GeneExpressionData.ipynb
+├── dataset/
+├── requirements.txt
+├── README.md
+└── .streamlit/
+    └── secrets.toml
+
+## Installation
+
+### 1. Clone the Repository
+
+git clone https://github.com/hakeemadnan/GeneExpressionDataCLusteringML.git
+cd GeneExpressionDataCLusteringML
+
+### 2. Create a Virtual Environment
+
+python -m venv venv
+
+Activate the environment:
+
+**Windows:**
+venv\Scripts\activate
+
+**Linux/macOS:**
+source venv/bin/activate
+
+### 3. Install Dependencies
+
+pip install -r requirements.txt
+
+## Gemini API Configuration
+
+Create the file:
+
+.streamlit/secrets.toml
+
+Add your API key:
+
+GEMINI_API_KEY = "your_api_key_here"
+
+> Do not upload or commit your API key to GitHub.
+
+## Run the Application
+
+streamlit run app.py
+
+## How to Use
+
+1. Upload an RNA-seq gene expression CSV dataset.
+2. Select the appropriate data orientation if required.
+3. Run the preprocessing pipeline.
+4. The application standardizes the numerical data.
+5. Hierarchical clustering is performed.
+6. The optimal number of clusters is determined using the Silhouette Score.
+7. View the dendrogram and cluster visualizations.
+8. Explore the PCA-based representation of the clusters.
+9. Use Gemini 2.5 Flash to generate an interpretation of the clustering results.
+
+## Use Cases
+
+- Gene expression pattern discovery
+- Exploratory analysis of genomic datasets
+- Unsupervised learning demonstrations
+- Biological data visualization
+- AI-assisted interpretation of machine learning results
+- Educational applications in bioinformatics and data science
+
+## Skills Demonstrated
+
+- Python Programming
+- Data Preprocessing
+- Exploratory Data Analysis
+- Unsupervised Machine Learning
+- Hierarchical Clustering
+- Dimensionality Reduction using PCA
+- Model Evaluation using Silhouette Score
+- Data Visualization
+- Generative AI Integration
+- Gemini API Integration
+- Streamlit Application Development
+
+## Author
+
+**Adnan Mushtaq**
+
+- GitHub: https://github.com/hakeemadnan
+- LinkedIn: https://www.linkedin.com/in/hakeemadnan
+- 
